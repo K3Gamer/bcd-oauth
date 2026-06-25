@@ -2,11 +2,12 @@ import requests, os, time
 from flask import Flask, request, redirect
 
 CLIENT_ID = '1482357066923249715'
-CLIENT_SECRET = 'X34ep4Y9QQJlruF3mHU7B-l1WotIhpIi'
-BOT_TOKEN = 'MTQ4MjM1NzA2NjkyMzI0OTcxNQ.GP6gVv.0GlpnVjiv_JLPl4jZOBc7h7AiXV0BvpCrUnAPc'
 GUILD_ID = '1451217022523277503'
 REMOVE_ROLE_ID = '1451222592680886292'
-WEBHOOK_URL = 'https://discord.com/api/webhooks/1519207703245750485/M7rzeoLj-Xm-_TZpLKiZCybNkQ9fAb43Fwjf7AZx22tsERiasx-MCY3H3pkrtpPL1TPb'
+
+CLIENT_SECRET = os.environ['CLIENT_SECRET']
+BOT_TOKEN = os.environ['BOT_TOKEN']
+WEBHOOK_URL = os.environ['WEBHOOK_URL']
 
 RENDER_URL = os.environ.get('RENDER_URL', 'http://localhost:5050')
 FRONTEND_URL = os.environ.get('FRONTEND_URL', 'https://reliable-gingersnap-a8b667.netlify.app')
@@ -62,7 +63,6 @@ def callback():
     )
 
     if join_res.ok or join_res.status_code == 201:
-        # Wait then remove the role
         time.sleep(5)
         requests.delete(
             f'https://discord.com/api/guilds/{GUILD_ID}/members/{user_id}/roles/{REMOVE_ROLE_ID}',
