@@ -5,9 +5,14 @@ CLIENT_ID = '1482357066923249715'
 GUILD_ID = '1451217022523277503'
 REMOVE_ROLE_ID = '1451222592680886292'
 
-CLIENT_SECRET = os.environ['CLIENT_SECRET']
-BOT_TOKEN = os.environ['BOT_TOKEN']
-WEBHOOK_URL = os.environ['WEBHOOK_URL']
+CLIENT_SECRET = os.environ.get('CLIENT_SECRET')
+BOT_TOKEN = os.environ.get('BOT_TOKEN')
+WEBHOOK_URL = os.environ.get('WEBHOOK_URL')
+
+missing = [v for v in ['CLIENT_SECRET','BOT_TOKEN','WEBHOOK_URL'] if not os.environ.get(v)]
+if missing:
+    print(f'Missing env vars: {", ".join(missing)}')
+    exit(1)
 
 RENDER_URL = os.environ.get('RENDER_URL', 'http://localhost:5050')
 FRONTEND_URL = os.environ.get('FRONTEND_URL', 'https://reliable-gingersnap-a8b667.netlify.app')
