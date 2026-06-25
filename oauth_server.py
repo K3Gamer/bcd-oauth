@@ -1,17 +1,20 @@
 import requests, os
-from flask import Flask, request, redirect, send_from_directory
+from flask import Flask, request, redirect
 
 CLIENT_ID = '1482357066923249715'
 CLIENT_SECRET = 'X34ep4Y9QQJlruF3mHU7B-l1WotIhpIi'
-REDIRECT_URI = 'http://localhost:5050/callback'
 WEBHOOK_URL = 'https://discord.com/api/webhooks/1519207703245750485/M7rzeoLj-Xm-_TZpLKiZCybNkQ9fAb43Fwjf7AZx22tsERiasx-MCY3H3pkrtpPL1TPb'
-BASE_URL = 'http://localhost:5050'
 
-app = Flask(__name__, static_folder=None)
+RENDER_URL = os.environ.get('RENDER_URL', 'http://localhost:5050')
+FRONTEND_URL = os.environ.get('FRONTEND_URL', 'https://reliable-gingersnap-a8b667.netlify.app')
+
+REDIRECT_URI = RENDER_URL + '/callback'
+
+app = Flask(__name__)
 
 @app.route('/')
-def index():
-    return send_from_directory(HTML_DIR, 'index.html')
+def home():
+    return 'BCD OAuth2 Server is running.'
 
 @app.route('/callback')
 def callback():
@@ -63,14 +66,8 @@ def callback():
 
     requests.post(WEBHOOK_URL, json=embed)
 
-    return redirect(f'{BASE_URL}/?oauth2=success')
+    return redirect(f'{FRONTEND_URL}/?oauth2=success')
 
 if __name__ == '__main__':
-    import sys
-    html_dir = os.path.join(os.environ['USERPROFILE'], 'Desktop', 'boi-cai-dao')
-    if not os.path.isdir(html_dir):
-        html_dir = os.path.dirname(os.path.abspath(__file__))
-    HTML_DIR = html_dir
-    print(f'🌐 http://localhost:5050')
-    print(f'📁 Serving: {HTML_DIR}')
-    app.run(port=5050, debug=False)
+    port = int(os.environ.get('PORT', 10000))
+    app.run(host='0.0.0.0', port=port)
