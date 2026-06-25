@@ -1,0 +1,39 @@
+name: Run OAuth2 Server
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  run-server:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Install cloudflared
+        run: |
+          curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -o cloudflared
+          chmod +x cloudflared
+
+      - name: Start server
+        run: |
+          python oauth_server.py &
+          sleep 3
+          echo "Server started"
+          ./cloudflared tunnel --url http://localhost:5050 &
+          sleep 5
+          echo "========================================="
+          echo "🔗 Public URL from cloudflared logs above"
+          echo "========================================="
+          echo "Server runs for up to 6 hours"
+          wait
